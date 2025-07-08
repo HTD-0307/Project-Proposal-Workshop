@@ -50,7 +50,7 @@ Hiện tại, nhiều kho hàng thương mại điện tử thường dùng bả
 ## 3. 🏗️ Solution Architecture
 
 ### High-level Architecture Diagram
-![Solution Architecture Diagram](/images/main_model_light.jpg)
+![Solution Architecture Diagram](/image/main_model_light.jpg)
 
 ### AWS Services Selection và Justification
 - **AWS IoT Core**: Thu thập dữ liệu cảm biến. Miễn phí 2000 tin nhắn/tháng
