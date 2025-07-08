@@ -247,55 +247,56 @@ Hiện tại, nhiều kho hàng thương mại điện tử thường dùng bả
 | Mất dữ liệu hoặc lỗi khôi phục | High   | Low         | Sao lưu DynamoDB, chính sách S3, kiểm tra khôi phục |
 
 ### Mitigation Strategies cho Each Risk
-- **Hệ thống không hoạt động khi tích hợp Rekognition**:
-  - Kiểm tra và thử nghiệm tích hợp Rekognition trong môi trường phát triển trước khi triển khai vào sản xuất.
-  - Sử dụng các API chính thức và tài liệu của AWS để đảm bảo tính tương thích.
+- **IoT Core cấu hình sai**:
+  - Tuân thủ tài liệu AWS IoT Core (AWS Documentation 2025) để thiết lập chủ đề MQTT, chứng chỉ thiết bị, và chính sách bảo mật.
+  - Sử dụng AWS IoT Device Simulator để kiểm tra cấu hình trước khi triển khai thực tế, mô phỏng 2,000 tin nhắn/tháng.
 
-- **Hiệu suất Lambda không đáp ứng yêu cầu**:
-  - Cấu hình tối ưu cho các hàm Lambda để tránh các vấn đề về hiệu suất khi có quá nhiều yêu cầu đồng thời.
-  - Sử dụng AWS CloudWatch để theo dõi và điều chỉnh cấu hình Lambda theo nhu cầu thực tế.
+- **Lỗi tích hợp hệ thống**:
+  - Thực hiện kiểm tra tích hợp (integration testing) trong Giai đoạn 3 (Tuần 6-7) giữa IoT Core, Lambda, DynamoDB, và SNS.
+  - SSử dụng AWS CloudFormation để tự động hóa triển khai, giảm lỗi cấu hình thủ công
 
-- **Khách hàng không chấp nhận công nghệ mới**:
-  - Tổ chức các buổi đào tạo cho khách hàng để họ hiểu rõ lợi ích của công nghệ AI.
-  - Cung cấp tài liệu chi tiết và hỗ trợ kỹ thuật khi khách hàng triển khai.
+- **Dữ liệu cảm biến không chính xác**:
+  - Triển khai quy tắc Lambda để phát hiện dữ liệu bất thường (e.g., giá trị tồn kho âm hoặc vượt quá dung lượng kho).
+  - Kiểm tra và hiệu chuẩn cảm biến (giả lập hoặc thực tế) trước khi tích hợp, đảm bảo sai số dưới 1% (IoT Analytics 2023).
 
-- **Không đáp ứng yêu cầu bảo mật và quyền riêng tư**:
-  - Đảm bảo hệ thống tuân thủ các quy chuẩn bảo mật quốc tế như GDPR, HIPAA.
-  - Cấu hình AWS IAM đúng cách để kiểm soát quyền truy cập vào dữ liệu.
+- **Không đạt được lợi ích kinh doanh mong đợi**:
+  - Thu thập dữ liệu cơ sở (baseline) về sai sót kiểm kê (5%), chi phí bổ sung hàng ($7,500/tháng), và hủy đơn (2.5%) trước triển khai (Statista 2023).
+  - Thực hiện kiểm toán hàng quý để so sánh sai sót kiểm kê và chi phí bổ sung hàng với mục tiêu (giảm 30% sai sót, 15% chi phí).
 
-- **Quá tải khi có quá nhiều yêu cầu đồng thời**:
-  - Sử dụng tính năng Auto-scaling của AWS Lambda để hệ thống tự động mở rộng khi cần thiết.
-  - Sử dụng AWS API Gateway để phân phối tải cho các API.
-
-- **Sự cố trong việc xử lý dữ liệu và bảo mật**:
-  - Sử dụng dịch vụ sao lưu dữ liệu tự động của AWS và thực hiện các biện pháp bảo mật như mã hóa dữ liệu.
+- **Vượt giới hạn AWS Free Tier**:
+  - Theo dõi chi phí hàng tuần qua AWS Budgets, đặt cảnh báo khi đạt 80% giới hạn Free Tier (AWS Pricing Calculator 2025).
+  - Xem xét giảm tần suất tin nhắn IoT (e.g., từ 5 phút/lần xuống 10 phút/lần) nếu gần vượt giới hạn.
+    
+- **Mất dữ liệu hoặc lỗi khôi phục**:
+  - Thiết lập sao lưu DynamoDB hàng ngày với Point-in-Time Recovery để khôi phục dữ liệu trong 35 ngày (AWS Backup Best Practices 2025).
+  - Áp dụng chính sách vòng đời S3 để lưu trữ log tối thiểu 30 ngày và chuyển sang Glacier sau 60 ngày để tiết kiệm chi phí.
 
 ### Contingency Plans
-- **Technical Risks**: Nếu hệ thống gặp sự cố tích hợp, chúng ta sẽ có kế hoạch quay lại phiên bản trước đó và làm việc với đội ngũ AWS support để khắc phục.
-- **Business Risks**: Nếu khách hàng không chấp nhận công nghệ, sẽ cung cấp thêm tài liệu và hỗ trợ để khách hàng hiểu rõ giá trị của AI. Nếu không thể triển khai, sẽ xem xét điều chỉnh công nghệ phù hợp với yêu cầu của khách hàng.
-- **Operational Risks**: Trong trường hợp hệ thống quá tải, sẽ tạm thời tăng cường tài nguyên (ví dụ, tăng số lượng phiên bản Lambda) hoặc áp dụng biện pháp giảm tải.
+- **Technical Risks**: Tạm dừng truyền dữ liệu IoT và chuyển sang kiểm kê thủ công trong 1-2 ngày để duy trì hoạt động kho. Khôi phục cấu hình bằng template CloudFormation hoặc công cụ AWS (e.g., Device Simulator) trong 48 giờ.
+- **Business Risks**: Chuyển sang kiểm kê thủ công trong 2-5 ngày để xác minh dữ liệu và ngăn hủy đơn (thiệt hại ~$2,250/tháng). Tinh chỉnh ngưỡng cảnh báo và quy trình bổ sung hàng trong 1 tháng dựa trên dữ liệu thực tế.
+- **Operational Risks**: Giảm tần suất tin nhắn IoT (e.g., từ 5 phút/lần xuống 15 phút/lần) và xóa log S3 cũ để giữ trong Free Tier (AWS Pricing Calculator 2025). Khôi phục dữ liệu từ bản sao lưu DynamoDB (Point-in-Time Recovery) hoặc log CloudWatch trong 24-48 giờ.
 
 ### Monitoring và Escalation Procedures
-- **Monitoring**: Sử dụng AWS CloudWatch để giám sát hiệu suất và lỗi hệ thống. Đặt ngưỡng cảnh báo khi có lỗi hệ thống.
-- **Escalation Procedures**: Nếu có sự cố lớn xảy ra, sẽ thông báo ngay cho người quản lý dự án và nhóm hỗ trợ kỹ thuật AWS để xử lý nhanh chóng.
+- **Monitoring**: Sử dụng AWS CloudWatch để theo dõi độ trễ Lambda, lỗi tin nhắn IoT, độ trễ cảnh báo SNS.
+- **Escalation Procedures**: Xử lý nhanh các vấn đề theo mức độ nghiêm trọng, đảm bảo khôi phục hệ thống và duy trì hoạt động kho..
 
 ## 8. 🎯 Expected Outcomes
 
 ### Success Metrics
-- **Technical**: Thời gian phản hồi dưới 5 giây, độ chính xác nhận diện đạt 95%.
-- **Business**: Tiết kiệm chi phí phân tích ảnh và tăng hiệu quả công việc.
+- **Technical**: 99% tin nhắn từ cảm biến được xử  lý đúng, 100% cảnh báo tồn kho được gửi trong 1 phút.
+- **Business**: Giảm sai sót kiểm kê từ 5% xuống 1%, giảm lao động kiểm kê hàng.
 
 ### Short-term Benefits (0-6 months)
-- Tiết kiệm chi phí phân tích ảnh.
+- Giải phóng nhân sự, giảm sai sót tồn kho.
 
 ### Medium-term Benefits (6-18 months)
-- Tăng trưởng doanh thu nhờ tự động hóa quy trình phân tích ảnh.
+- Tăng doanh thu, tái đầu tư hoặc nâng cấp kho.
 
 ### Long-term Value (18+ months)
-- Mở rộng ứng dụng AI trong các lĩnh vực khác để tạo lợi thế cạnh tranh.
+- Tối ưu hóa lưu kho, tăng hiệu quả vốn, tăng doanh thu tiềm năng.
 
 ### User Experience Improvements
-- Trải nghiệm người dùng sẽ được cải thiện với hệ thống tự động nhận diện ảnh chính xác và nhanh chóng.
+- Tăng mức độ hài lòng của khách hàng.
 
 ### Strategic Capabilities Gained
-- Cải thiện hiệu quả công việc và tạo lợi thế cạnh tranh thông qua tự động hóa.
+- Tự động hóa kho giúp SMEs cạnh tranh hiệu quả.
