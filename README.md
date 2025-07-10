@@ -1,4 +1,4 @@
-# Proposal: Hệ thống Giám sát Kho hàng Thông minh với AWS IoT Core
+# Proposal: AI Giám sát Kho hàng Thông minh với AWS IoT Core
 # Thông Tin Sinh Viên Thực Tập
 -  👨‍🎓 **Họ và Tên**: Huỳnh Thành Đô
 -  👨‍🎓 **Trường Đại Học**: Đại Học công Nghệ TP.HCM (HUTECH)
