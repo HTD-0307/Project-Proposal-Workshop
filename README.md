@@ -5,7 +5,7 @@
 -  🆔 **MSSV**: 2180600307
 -  📧 **Gmail**: dohuynh116@gmail.com
 -  🐱 **Github**: [https://github.com/HTD-0307](https://github.com/HTD-0307)
--  🔗 **Link Workshop**: [https://htd-0307.github.io/]
+-  🔗 **Link Workshop**: [https://htd-0307.github.io/](https://htd-0307.github.io/)
 ## 1. 📄 Executive Summary
 
 ### Problem Statement
